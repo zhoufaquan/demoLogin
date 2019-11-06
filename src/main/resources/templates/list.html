@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>index.html</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/css/community.css">
+    <script src="/js/jquery-3.4.1.js" type="application/javascript"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
+</head>
+<body>
+<div align="center">
+    <table border="1">
+        <tr>
+            <th class="list_th">id</th>
+            <th class="list_th">telephone</th>
+            <th class="list_th">password</th>
+            <th class="list_th">token</th>
+            <th class="list_th">操作</th>
+            <th class="list_th">操作</th>
+        </tr>
+        <tr th:each="person:${pageInfo.list}">
+            <td th:text="${person.id}"></td>
+            <td th:text="${person.telephone}"></td>
+            <td th:text="${person.password}"></td>
+            <td th:text="${person.token}"></td>
+            <td ><a th:href="@{/delete.action}">删除</a></td>
+            <td ><a th:href="@{/update.action}">修改</a></td>
+        </tr>
+    </table>
+    <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="${pageInfo.pages}"></span> 页,共 <span th:text="${pageInfo.total}"></span> 条记录</p>
+    <a th:href="@{/list.action}">首页</a>
+    <a th:href="@{/list.action(pageNum=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+    <a th:href="@{/list.action(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+    <a th:href="@{/list.action(pageNum=${pageInfo.pages})}">尾页</a>
+</div>
+</body>
+</html>

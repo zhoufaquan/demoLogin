@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>登录</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/css/community.css">
+
+    <script src="/js/jquery-3.4.1.js" type="application/javascript"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
+
+
+</head>
+<style>
+
+
+</style>
+<body>
+<form action="/login" name="mobileform" id="form1" onclick="return checkForm()" method="get">
+    <div class="form-group fgdiv">
+        <label for="telephone">telephone</label>
+
+        <input type="text" class="form-control dlinput" id="telephone" name="telephone" placeholder="请输入11位的手机号"   required minlength="11" >
+        <div class="warn1"></div>
+    </div>
+    <div class="form-group fgdiv">
+        <label for="password">password</label>
+        <input type="text" class="form-control dlinput" id="password" name="password" placeholder="请输入6位数字密码"  required minlength="6">
+        <div class="warn2"></div>
+    </div>
+    <div class="msg" th:text="${msg}"></div>
+    <button type="submit" class="btn btn-success dlbtn" >submit</button>
+</form>
+
+</body>
+
+<script type="text/javascript">
+    function checkForm(){
+
+        var telephone = $("#telephone").val();
+        var  password = $("#password").val();
+
+        $("#telephone").ready(function () {
+            if(telephone == ""){
+                $(".warn1").html("")
+                return false;
+            }
+        })
+        $("#password").ready(function () {
+            if(password == ""){
+                $(".warn2").html("")
+                return false;
+            }
+        })
+        $("#telephone").focus(function () {
+            $(".warn2").html("")
+
+            return false;
+        })
+        $("#password").focus(function () {
+            $(".warn2").html("")
+            return false;
+        })
+        $("#telephone").blur(function (){
+
+            if(telephone == ""){
+                $(".warn1").html("")
+                return false;
+            }
+        })
+        $("#password").blur(function () {
+
+            if(password == ""){
+                $(".warn2").html("")
+                return false;
+            }
+        })
+
+     if(!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))){
+            $(".warn1").html("手机号码格式不正确")
+            return false;
+        }
+     else if(!(/^[0-9]{6}$/.test(password))){
+         $(".warn2").html("密码格式格式不正确")
+         return false;
+     } else {
+        return true;
+     }
+
+    }
+    $(function () {
+        $("#telephone").focus(function () {
+            $(".msg").hide();
+        })
+    })
+</script>
+</html>

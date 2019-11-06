@@ -1,0 +1,25 @@
+body{
+    margin-top: 200px;
+    background-color: #dedede;
+    text-align: center ;
+    background-image: url("/img/homepage5.jpg");
+    background-size: cover;
+          /*图片始终保持在页面的中间*/
+    background-position: center;
+}
+.dlinput{
+    width: 200px;
+    margin: 0 auto;
+}
+
+
+.zfq{
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+    height:35px;
+    display: block;
+}
+.list_th{
+    text-align: center;
+}
