@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--nameSpace 与dao层建立连接-->
+<mapper namespace="com.example.login.demo.dao.OperationDao">
+
+    <insert id="addUser" parameterType="com.example.login.demo.entity.User" >
+         insert into hellodao (telephone,password,token) values(#{telephone},#{password},#{token})
+    </insert>
+    <update id="updateUser" >
+        update hellodao
+        set
+        <if test="telephone!=null">
+            telephone=#{telephone},
+
+        </if>
+            <if test="password!=null">
+                   password=#{password}
+            </if>
+
+         where id=#{id}
+    </update>
+    <delete id="deleteUserById" parameterType="int">
+       delete from hellodao where id=#{id}
+    </delete>
+    <select id="getUserById" resultType="com.example.login.demo.entity.User">
+        select * from hellodao where id = #{id}
+    </select>
+</mapper>

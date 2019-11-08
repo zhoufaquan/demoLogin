@@ -87,7 +87,6 @@ public class LoginController {
         return "/login";
     }
     @GetMapping("/list.action")
-
     public String fengye(@RequestParam(defaultValue = "1",value = "pageNum") Integer pageNum,
                          Model model){
         //通过构造PageInfo对象获取分页信息

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/css/community.css">
     <script src="/js/jquery-3.4.1.js" type="application/javascript"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="/js/bootstrap.js" type="application/javascript"></script>
 </head>
 <body>
@@ -19,14 +20,24 @@
             <th class="list_th">token</th>
             <th class="list_th">操作</th>
             <th class="list_th">操作</th>
+            <th class="list_th">操作</th>
         </tr>
         <tr th:each="person:${pageInfo.list}">
             <td th:text="${person.id}"></td>
             <td th:text="${person.telephone}"></td>
             <td th:text="${person.password}"></td>
             <td th:text="${person.token}"></td>
-            <td ><a th:href="@{/delete.action}">删除</a></td>
-            <td ><a th:href="@{/update.action}">修改</a></td>
+            <td ><button type="button" class="btn btn-primary"   th:onclick="'javascript:deleteUser('+${person.id}+')'">
+                删除
+            </button></td>
+            <td ><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2" onclick=" return clearUser()">
+                添加
+            </button></td>
+            <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal3"  th:onclick="'javascript:editUser('+${person.id}+')'" >
+                修改
+            </button></td>
+
+
         </tr>
     </table>
     <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="${pageInfo.pages}"></span> 页,共 <span th:text="${pageInfo.total}"></span> 条记录</p>
@@ -35,5 +46,279 @@
     <a th:href="@{/list.action(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
     <a th:href="@{/list.action(pageNum=${pageInfo.pages})}">尾页</a>
 </div>
+
+
+
+
+<!-- 模态框 -->
+<div class="modal fade" id="myModal2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <form  id="mobileform"  onclick="return checkForm()" method="get">
+                    <div class="form-group fgdiv">
+                        <label for="telephone">telephone</label>
+
+                        <input type="text" class="form-control dlinput" id="telephone" name="telephone" placeholder="请输入11位的手机号"   required minlength="11" >
+                        <div class="warn1"></div>
+                    </div>
+                    <div class="form-group fgdiv">
+                        <label for="password">password</label>
+                        <input type="text" class="form-control dlinput" id="password" name="password" placeholder="请输入6位数字密码"  required minlength="6">
+                        <div class="warn2"></div>
+                    </div>
+                    <button type="submit" class="btn btn-success dlbtn" onclick="return createUser()">提交</button>
+                </form>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModal3">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <form   id="mobileform1" onclick="return checkForm2()" method="get">
+
+                    <input type="hidden" class="form-control dlinput" id="user_id" name="id"/>
+
+                    <div class="form-group fgdiv">
+                        <label for="telephone1">telephone</label>
+
+                        <input type="text" class="form-control dlinput" id="telephone1" name="telephone" placeholder="请输入11位的手机号"   required minlength="11" >
+                        <div class="warn1"></div>
+                    </div>
+                    <div class="form-group fgdiv">
+                        <label for="password1">password</label>
+                        <input type="text" class="form-control dlinput" id="password1" name="password" placeholder="请输入6位数字密码"  required minlength="6">
+                        <div class="warn2"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success dlbtn" onclick="return updateCustomer()">保存修改</button>
+                </form>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 </body>
+<script type="text/javascript">
+    //  今天发现$.post的回调函数无法赋值 debug发现在，回调函数还未执行时赋值操作已完成考虑到可能是异步操作。
+    // 在网上查找资料发现：Jquery封装好的$.post $.get发得请求都为“异步”请求，
+    // 所以发出请求后还没等一般处理程序处理返回结果，就执行了为变量赋值，因此取到的值总为undefined。
+    //解决同步问题
+ $.ajaxSetup({
+     async:false
+ });
+    function clearUser() {
+        $("#telephone").val("");
+        $("#password").val("");
+    }
+    function checkForm(){
+
+        var telephone = $("#telephone").val();
+        var  password = $("#password").val();
+
+        $("#telephone").ready(function () {
+            if(telephone == ""){
+                $(".warn1").html("")
+                return false;
+            }
+        })
+        $("#password").ready(function () {
+            if(password == ""){
+                $(".warn2").html("")
+                return false;
+            }
+        })
+        $("#telephone").focus(function () {
+            $(".warn2").html("")
+
+            return false;
+        })
+        $("#password").focus(function () {
+            $(".warn2").html("")
+            return false;
+        })
+        $("#telephone").blur(function (){
+
+            if(telephone == ""){
+                $(".warn1").html("")
+                return false;
+            }
+        })
+        $("#password").blur(function () {
+
+            if(password == ""){
+                $(".warn2").html("")
+                return false;
+            }
+        })
+
+        if(!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))){
+            $(".warn1").html("手机号码格式不正确")
+            console.log(telephone)
+            return false;
+
+        }
+        else if(!(/^[0-9]{6}$/.test(password))){
+            $(".warn2").html("密码格式格式不正确")
+            console.log(password)
+            return false;
+
+        } else {
+            return true;
+            console.log("successful")
+        }
+    }
+    $(function () {
+        $("#telephone").focus(function () {
+            $(".msg").hide();
+        })
+    })
+
+    function createUser() {
+        //解决同步问题
+        async:false,
+            $.post("/add.action",$("#mobileform").serialize(),function (data) {
+                alert(data)
+                if (data === "OK"){
+                    alert("客户添加成功");
+                    window.location.reload();
+                } else {
+                    alert("客户添加失败");
+                    window.location.reload();
+                }
+            });
+
+    }
+
+    function checkForm2(){
+
+        var telephone = $("#telephone1").val();
+        var  password = $("#password1").val();
+
+        $("#telephone1").ready(function () {
+            if(telephone == ""){
+                $(".warn1").html("")
+                return false;
+            }
+        })
+        $("#password1").ready(function () {
+            if(password == ""){
+                $(".warn2").html("")
+                return false;
+            }
+        })
+        //聚焦
+        $("#telephone1").focus(function () {
+            $(".warn2").html("")
+
+            return false;
+        })
+        $("#password1").focus(function () {
+            $(".warn2").html("")
+            return false;
+        })
+        //失去焦点
+        $("#telephone1").blur(function (){
+
+            if(telephone == ""){
+                $(".warn1").html("")
+                return false;
+            }
+        })
+        $("#password1").blur(function () {
+
+            if(password == ""){
+                $(".warn2").html("")
+                return false;
+            }
+        })
+
+        if(!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))){
+            $(".warn1").html("手机号码格式不正确")
+            return false;
+        }
+        else if(!(/^[0-9]{6}$/.test(password))){
+            $(".warn2").html("密码格式格式不正确")
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+    $(function () {
+        $("#telephone").focus(function () {
+            $(".msg").hide();
+        })
+    })
+
+    function editUser(ID) {
+        console.log(ID)
+        const modal = $("#myModal3");
+        modal.find('#user_id').val(ID);
+    }
+
+
+    // 执行修改客户操作
+    function updateCustomer() {
+
+        $.post("/update.action",$("#mobileform1").serialize(),function(data){
+            console.log(data)
+            if(data =="OK"){
+                alert("客户信息更新成功！");
+                window.location.reload();
+            }else{
+                alert("客户信息更新失败！");
+                window.location.reload();
+            }
+        });
+    }
+    // 删除客户
+    function deleteUser(id) {
+        if(confirm('确实要删除该客户吗?')) {
+            $.post("/delete.action",{"id":id},
+                function(data){
+                    if(data =="OK"){
+                        alert("客户删除成功！");
+                        window.location.reload();
+                    }else{
+                        alert("删除客户失败！");
+                        window.location.reload();
+                    }
+                });
+        }
+    }
+</script>
 </html>
