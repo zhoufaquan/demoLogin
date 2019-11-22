@@ -19,24 +19,22 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Author: zhouFaQuan
- * Date: 2019/10/28 21:36
+ * @Author: zhouFaQuan
+ * @Date: 2019/10/28 21:36
  */
 @Controller
 //@Controller用于标注控制层组件
 public class LoginController {
+
     @Autowired
     private LoginService loginService;
+
     private HttpServletResponse response;
 
     @GetMapping("/login")
     public String login(@Param("telephone") String telephone, @Param("password") String password, Model model,
                         HttpServletRequest request, HttpServletResponse response) {
-//        //index初始化数据
-//        int pageNum = 1;
-//        int size = 5;
-//        PageInfo<User> pp =  loginService.selectAll(pageNum,size);
-//        model.addAttribute("pageInfo", pp);
+
         User user1 = loginService.findUser(telephone);
         if (user1 != null) {
            if (!user1.getPassword().equals(password)) {
@@ -54,7 +52,8 @@ public class LoginController {
             user.setPassword(password);
             user.setToken(token);
             User msg = loginService.insertUser(user);
-            int expire = 60 * 60 * 24 * 7;  //表示7天
+            //表示7天
+            int expire = 60 * 60 * 24 * 7;
             CookieUtil.setCookie(request, response, "Token", token, expire);
             HttpSession session = request.getSession();
             session.setAttribute("telephone",telephone);
@@ -75,6 +74,13 @@ public class LoginController {
                 return "index";
         }
         return "login";
+    }
+    @RequestMapping("/main2")
+    public String mainPage2(){
+        // 判断cookie是否存在，如存在则利用cookie登录，否则返回登录界面
+
+            return "index";
+
     }
     @GetMapping("/login2")
     public String login2(HttpSession session){
@@ -105,6 +111,8 @@ public class LoginController {
             return null;
         }
     }
+   
+
 
 }
 
